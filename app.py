@@ -22,6 +22,10 @@ def dashboard():
 def feedback():
     return render_template("user_feedback.html")
 
+@app.route('/profile')
+def profile():
+    return render_template("profile.html")
+
 # @app.route('/test-firebase')
 # def test_firebase():
 #     return app.send_static_file('js/firebase-config.js')

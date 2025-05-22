@@ -82,7 +82,7 @@
 
   <div class="navbar">
     <h1>Admin Panel - We Park</h1>
-    <span id="user-email"></span>
+    <a id="user-email" href="#" style="color: white; text-decoration: underline; cursor: pointer;"></a>
   </div>
 
   <div class="container">
@@ -211,6 +211,19 @@
     function goToFeedback() {
   window.location.href = "/feedback";
 }
+function goToProfile() {
+    window.location.href = "/profile";
+  }
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      const userEmail = document.getElementById("user-email");
+      userEmail.textContent = user.email;
+      userEmail.onclick = goToProfile; // klik email redirect ke profil
+    } else {
+      window.location.href = "/login";
+    }
+  });
 
   </script>
 </body>
