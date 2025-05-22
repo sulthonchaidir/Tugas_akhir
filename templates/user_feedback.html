@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Keluhan Pengguna - We Park</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; }
+    textarea { width: 100%; height: 120px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; }
+    button { padding: 10px 20px; background: green; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: darkgreen; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Form Keluhan</h2>
+    <p id="user-email">Login sebagai: ...</p>
+    <textarea id="complaint" placeholder="Tulis keluhan Anda..."></textarea>
+    <button onclick="sendComplaint()">Kirim Keluhan</button>
+    <button onclick="logout()" style="margin-left: 10px; background: darkred;">Logout</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnX14P0ykDrTApG8_gdpRO1ucHwoExrD4",
+      authDomain: "we-park-a98ff.firebaseapp.com",
+      projectId: "we-park-a98ff",
+      storageBucket: "we-park-a98ff.appspot.com",
+      messagingSenderId: "972441358033",
+      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("user-email").textContent = "Login sebagai: " + user.email;
+      } else {
+        window.location.href = "/login";
+      }
+    });
+
+    function sendComplaint() {
+      const user = firebase.auth().currentUser;
+      const msg = document.getElementById("complaint").value.trim();
+      if (!msg || !user) return alert("Masukkan keluhan terlebih dahulu.");
+      db.collection("complaints").add({
+  email: user.email,
+  message: msg,
+  timestamp: firebase.firestore.FieldValue.serverTimestamp()
+}).then(() => {
+  alert("✅ Keluhan berhasil dikirim anda akan kembali kehalaman dashboard.");
+  window.location.href = "/dashboard";
+}).catch(err => {
+        alert("❌ Gagal mengirim keluhan: " + err.message);
+      });
+    }
+
+    function logout() {
+      firebase.auth().signOut().then(() => window.location.href = "/login");
+    }
+  </script>
+</body>
+</html>
