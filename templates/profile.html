@@ -65,7 +65,8 @@
       user-select: none;
     }
     input[type="text"],
-    input[type="email"] {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -130,6 +131,7 @@
 
 <main>
   <h2>Profil Pengguna</h2>
+  
   <div class="field-group">
     <label for="nameInput">Nama</label>
     <input type="text" id="nameInput" readonly />
@@ -142,6 +144,13 @@
     <input type="email" id="emailInput" readonly />
     <button class="edit" id="editEmailBtn">Edit</button>
     <button class="save" id="saveEmailBtn" style="display:none;">Save</button>
+  </div>
+
+  <div class="field-group">
+    <label for="passwordInput">Password</label>
+    <input type="password" id="passwordInput" placeholder="********" readonly />
+    <button class="edit" id="editPasswordBtn">Edit</button>
+    <button class="save" id="savePasswordBtn" style="display:none;">Save</button>
   </div>
 
   <button class="logout" id="logoutBtn">Logout</button>
@@ -169,11 +178,13 @@
     if (user) {
       document.getElementById('nameInput').value = user.displayName || '';
       document.getElementById('emailInput').value = user.email || '';
+      document.getElementById('passwordInput').value = ''; // kosongkan password field untuk keamanan
     } else {
       window.location.href = '/login';
     }
   });
 
+  // Nama
   const editNameBtn = document.getElementById('editNameBtn');
   const saveNameBtn = document.getElementById('saveNameBtn');
   const nameInput = document.getElementById('nameInput');
@@ -205,6 +216,7 @@
     });
   };
 
+  // Email
   const editEmailBtn = document.getElementById('editEmailBtn');
   const saveEmailBtn = document.getElementById('saveEmailBtn');
   const emailInput = document.getElementById('emailInput');
@@ -236,12 +248,53 @@
     });
   };
 
+  // Password
+  const editPasswordBtn = document.getElementById('editPasswordBtn');
+  const savePasswordBtn = document.getElementById('savePasswordBtn');
+  const passwordInput = document.getElementById('passwordInput');
+
+  editPasswordBtn.onclick = () => {
+    passwordInput.removeAttribute('readonly');
+    passwordInput.value = '';
+    passwordInput.focus();
+    editPasswordBtn.style.display = 'none';
+    savePasswordBtn.style.display = 'inline-block';
+  };
+
+  savePasswordBtn.onclick = () => {
+    const user = auth.currentUser;
+    const newPassword = passwordInput.value.trim();
+
+    if (!newPassword) {
+      alert('Password tidak boleh kosong');
+      passwordInput.focus();
+      return;
+    }
+    if (newPassword.length < 6) {
+      alert('Password minimal 6 karakter');
+      passwordInput.focus();
+      return;
+    }
+
+    user.updatePassword(newPassword).then(() => {
+      alert('Password berhasil diupdate!');
+      passwordInput.value = '';
+      passwordInput.setAttribute('readonly', true);
+      editPasswordBtn.style.display = 'inline-block';
+      savePasswordBtn.style.display = 'none';
+    }).catch(err => {
+      alert('Gagal update password: ' + err.message);
+    });
+  };
+
+  // Logout
   document.getElementById('logoutBtn').onclick = () => {
     auth.signOut().then(() => {
       window.location.href = '/login';
     });
   };
 
+  // Dashboard Button
   document.getElementById('dashboardBtn').addEventListener('click', () => {
     window.location.href = '/dashboard';
   });

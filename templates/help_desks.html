@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Help Desk - We Park</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #24406b;
+    }
+    #user-email {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      color: #555;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 12px;
+      font-size: 1rem;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      background-color: #2980b9;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 25px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1a5a90;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Help Desk - Kirim Keluhan Aplikasi</h1>
+  <div id="user-email">Memuat info user...</div>
+  <textarea id="complaint" placeholder="Tuliskan keluhan atau masukan terkait aplikasi..."></textarea>
+  <button id="sendBtn">Kirim Keluhan</button>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnX14P0ykDrTApG8_gdpRO1ucHwoExrD4",
+      authDomain: "we-park-a98ff.firebaseapp.com",
+      projectId: "we-park-a98ff",
+      storageBucket: "we-park-a98ff.appspot.com",
+      messagingSenderId: "972441358033",
+      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('user-email').textContent = 'Login sebagai: ' + user.email;
+      } else {
+        window.location.href = '/login';
+      }
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', () => {
+      const user = auth.currentUser;
+      const complaint = document.getElementById('complaint').value.trim();
+
+      if (!complaint) {
+        alert('Mohon isi keluhan terlebih dahulu.');
+        return;
+      }
+
+      db.collection('app_complaints').add({
+        email: user.email,
+        message: complaint,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert('Keluhan berhasil dikirim. Terima kasih atas masukan Anda!');
+        document.getElementById('complaint').value = '';
+      }).catch(error => {
+        alert('Gagal mengirim keluhan: ' + error.message);
+      });
+    });
+  </script>
+
+</body>
+</html>

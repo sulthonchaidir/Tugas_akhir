@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Help & Logout - We Park</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #24406b;
+      color: white;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .button-container {
+      display: flex;
+      gap: 20px;
+    }
+    button {
+      padding: 15px 30px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-width: 160px;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+    #helpBtn {
+      background-color: #2980b9;
+    }
+    #helpBtn:hover {
+      background-color: #1a5a90;
+    }
+    #dashboardBtn {
+      background-color: #27ae60;
+    }
+    #dashboardBtn:hover {
+      background-color: #1e8449;
+    }
+    #logoutBtn {
+      background-color: #e74c3c;
+    }
+    #logoutBtn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="button-container">
+    <button id="helpBtn">Help Desk</button>
+    <button id="dashboardBtn">Kembali ke Dashboard</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnX14P0ykDrTApG8_gdpRO1ucHwoExrD4",
+      authDomain: "we-park-a98ff.firebaseapp.com",
+      projectId: "we-park-a98ff",
+      storageBucket: "we-park-a98ff.appspot.com",
+      messagingSenderId: "972441358033",
+      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById('helpBtn').addEventListener('click', () => {
+      window.location.href = '/help_desks.html';
+    });
+
+    document.getElementById('dashboardBtn').addEventListener('click', () => {
+      window.location.href = '/dashboard';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = '/login';
+      });
+    });
+  </script>
+</body>
+</html>
