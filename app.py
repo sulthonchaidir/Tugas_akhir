@@ -35,6 +35,9 @@ def profile():
 def settings():
     return render_template("settings.html")
 
+@app.route('/notification.html')
+def notification():
+    return render_template("notification.html")
 
 # Uncomment ini jika ingin akses file statis js firebase-config.js
 # @app.route('/test-firebase')

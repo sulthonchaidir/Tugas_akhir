@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>We-Park Notification</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0A2A50;
+      color: white;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #0A2A50;
+      padding: 1rem 2rem;
+      color: white;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .navbar-left i {
+      font-size: 1.5rem;
+    }
+
+    .navbar-left h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .navbar-right a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      margin: 30px auto;
+      background-color: white;
+      width: 90%;
+      max-width: 900px;
+      padding: 1rem;
+      border-radius: 15px;
+      min-height: 400px;
+    }
+
+    .notification {
+      background-color: #12325b;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .notification img {
+      width: 40px;
+      height: 40px;
+      margin-right: 1rem;
+    }
+
+    .notification-text {
+      flex-grow: 1;
+    }
+
+    .notification-time {
+      font-size: 0.75rem;
+      color: #aaa;
+      position: absolute;
+      right: 1rem;
+      bottom: 0.5rem;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #555;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="navbar-left">
+      <h2>We–Park Management</h2>
+    </div>
+    <div class="navbar-right">
+      <a href="/notification.html" title="Notifikasi">
+    <i class="fas fa-bell"></i>
+    </a>
+      <a href="/dashboard">See Park</a>
+      <a href="/settings.html">Setting</a>
+      <a href="/profile.html">Account</a>
+      <i class="fas fa-user-circle"></i>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="notification-list" class="content"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnX14P0ykDrTApG8_gdpRO1ucHwoExrD4",
+      authDomain: "we-park-a98ff.firebaseapp.com",
+      databaseURL: "https://we-park-a98ff-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "we-park-a98ff",
+      storageBucket: "we-park-a98ff.appspot.com",
+      messagingSenderId: "972441358033",
+      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const container = document.getElementById("notification-list");
+
+    function renderNotification(msg, time) {
+      const box = document.createElement('div');
+      box.className = 'notification';
+      box.innerHTML = `
+        <img src="https://via.placeholder.com/40x40?text=LOGO" alt="logo" />
+        <div class="notification-text">
+          <strong>We–Park</strong><br />
+          ${msg}
+        </div>
+        <div class="notification-time">${time}</div>
+      `;
+      container.appendChild(box);
+    }
+
+    function formatTime(isoString) {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    db.ref('notifications').on('value', snapshot => {
+      container.innerHTML = '';
+      const data = snapshot.val();
+
+      if (!data) {
+        container.innerHTML = "<p class='empty-message'>Tidak ada notifikasi.</p>";
+        return;
+      }
+
+      const sorted = Object.entries(data).sort((a, b) =>
+        new Date(b[1].timestamp) - new Date(a[1].timestamp)
+      );
+
+      sorted.forEach(([id, notif]) => {
+        renderNotification(notif.message, formatTime(notif.timestamp));
+      });
+    });
+  </script>
+</body>
+</html>
