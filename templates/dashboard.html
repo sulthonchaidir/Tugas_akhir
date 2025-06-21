@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Dashboard - We Park</title>
+  <title>We-Park Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f4;
+      background-color: #041E42;
     }
     .navbar {
-      background-color: #2c3e50;
+      background-color: #041E42;
       color: white;
       padding: 1rem 2rem;
       display: flex;
@@ -24,131 +25,141 @@
     .navbar-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
     }
-    #settingsBtn {
-      background: transparent;
+    .navbar-right a {
       color: white;
-      border: none;
-      cursor: pointer;
+      text-decoration: none;
       font-weight: bold;
-      font-size: 0.95rem;
-      padding: 0;
-      text-decoration: underline;
-    }
-    #settingsBtn:hover {
-      color: #a3c2f2;
-    }
-    #user-email {
-      color: white;
-      text-decoration: underline;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 0.95rem;
-      margin: 0;
-    }
-    #user-email:hover {
-      color: #a3c2f2;
     }
     .container {
-      max-width: 800px;
-      margin: 50px auto;
-      background: white;
+      max-width: 900px;
+      margin: 30px auto;
+      background: #1B2A4E;
       padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      color: white;
+    }
+    .parking-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      justify-items: center;
+      margin-top: 20px;
+    }
+    .slot-box {
+      width: 100px;
+      height: 150px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .section {
-      margin-bottom: 2rem;
-    }
-    input, select, button {
+      text-align: center;
+      font-weight: bold;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       padding: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+    .slot-box.green { background-color: #2ecc71; }
+    .slot-box.red { background-color: #e74c3c; }
+    .slot-box.gray {
+      background: repeating-linear-gradient(45deg, #2c3e50, #2c3e50 10px, #34495e 10px, #34495e 20px);
+    }
+    .slot-box.blue { background-color: #3498db; }
+    .slot-id {
+      font-size: 12px;
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+    }
+    .car-icon i {
+      font-size: 2rem;
+      color: white;
+    }
+    .logout-btn {
+      margin-top: 20px;
+      background: #e74c3c;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
       margin-top: 10px;
-      margin-right: 5px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    button {
+    .modal-content button {
+      padding: 10px;
+      width: 100%;
+      border: none;
       background: #2980b9;
       color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button.logout {
-      background: #e74c3c;
-    }
-    .slot-log {
-      margin-top: 1rem;
-      background: #ecf0f1;
-      padding: 1rem;
       border-radius: 5px;
-      font-family: monospace;
+      cursor: pointer;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #34495e;
-      color: white;
+    .modal-close {
+      text-align: right;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="navbar">
-    <h1>Admin Panel - We Park</h1>
+    <h1>We-Park Dashboard</h1>
     <div class="navbar-right">
-      <button id="settingsBtn">Settings</button>
+      <a href="/settings.html">Settings</a>
       <a id="user-email" href="#"></a>
     </div>
   </div>
 
   <div class="container">
-    <div class="section">
-      <h2>Ubah Status Parkir</h2>
-      <input type="text" id="slot-id" placeholder="Slot ID" />
-      <select id="slot-status">
-        <option value="Tersedia">Tersedia</option>
-        <option value="Penuh">Penuh</option>
-        <option value="Terlalu Dekat">Terlalu Dekat</option>
-      </select>
-      <button onclick="updateSlotStatus()">Update</button>
-      <button onclick="goToFeedback()">Lihat Keluhan Pengguna</button>
-      <div class="slot-log" id="log"></div>
-    </div>
+    <h2>Status Slot Parkir</h2>
+    <div class="parking-grid" id="visual-parking-grid"></div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
 
-    <div class="section">
-      <h2>Data Slot Parkir Saat Ini</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Slot ID</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="parking-data"></tbody>
-      </table>
-    </div>
-
-    <div class="section">
-      <button class="logout" onclick="logout()">Logout</button>
+  <!-- Modal -->
+  <div class="modal" id="reservationModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeModal()">✖</div>
+      <h3>Reservasi Slot</h3>
+      <input type="text" id="vehicleType" placeholder="Jenis Kendaraan (mobil/motor)" required />
+      <input type="text" id="plateNumber" placeholder="Plat Nomor" required />
+      <button onclick="submitReservation()">Kirim</button>
     </div>
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -157,102 +168,159 @@
       projectId: "we-park-a98ff",
       storageBucket: "we-park-a98ff.appspot.com",
       messagingSenderId: "972441358033",
-      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
+      appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0",
+      databaseURL: "https://we-park-a98ff-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
 
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const messaging = firebase.messaging();
+    const rtdb = firebase.database();
 
-    function goToProfile() {
-      window.location.href = "/profile";
-    }
-
-    function goToSettings() {
-      window.location.href = "/settings";
-    }
-
-    function goToFeedback() {
-      window.location.href = "/feedback";
-    }
+    let currentUserId = null;
+    let selectedSlotId = null;
 
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        const userEmail = document.getElementById("user-email");
-        userEmail.textContent = user.email;
-        userEmail.onclick = goToProfile; // klik email redirect ke profil
+        currentUserId = user.uid;
+        document.getElementById("user-email").textContent = user.email;
+        loadParkingData();
       } else {
         window.location.href = "/login";
       }
     });
 
-    document.getElementById('settingsBtn').addEventListener('click', () => {
-      goToSettings();
-    });
-
     function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "/login";
-      });
-    }
-
-    function updateSlotStatus() {
-      const slotId = document.getElementById("slot-id").value.trim();
-      const status = document.getElementById("slot-status").value;
-      const log = document.getElementById("log");
-
-      if (!slotId) {
-        log.innerText = "⚠️ Slot ID wajib diisi.";
-        return;
-      }
-
-      db.collection("parking_slots").doc(slotId).set({
-        status: status
-      }, { merge: true })
-      .then(() => {
-        log.innerText = `✅ Slot '${slotId}' berhasil diperbarui ke '${status}'.`;
-        loadParkingData();
-        sendNotificationToAll(`Slot ${slotId}`, `Status diubah menjadi ${status}`);
-      })
-      .catch(error => {
-        log.innerText = `❌ Gagal memperbarui: ${error.message}`;
-      });
+      firebase.auth().signOut().then(() => window.location.href = "/login");
     }
 
     function loadParkingData() {
-      const tbody = document.getElementById("parking-data");
-      tbody.innerHTML = "";
-      db.collection("parking_slots").get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const tr = document.createElement("tr");
-          const data = doc.data();
-          tr.innerHTML = `<td>${doc.id}</td><td>${data.status}</td>`;
-          tbody.appendChild(tr);
+      const grid = document.getElementById("visual-parking-grid");
+      grid.innerHTML = "";
+
+      rtdb.ref("parking_slots").on("value", snapshot => {
+        grid.innerHTML = "";
+        let userAlreadyReserved = false;
+        let availableCount = 0;
+
+        const slots = snapshot.val();
+        if (!slots) return;
+
+        Object.entries(slots).forEach(([slotId, data]) => {
+          const status = (data.status || "").toLowerCase();
+          const isMine = data.reserved_by === currentUserId;
+
+          const box = document.createElement("div");
+          box.classList.add("slot-box");
+
+          if (isMine) box.classList.add("blue");
+          else if (status === "tersedia") box.classList.add("green");
+          else if (status === "penuh") box.classList.add("red");
+          else box.classList.add("gray");
+
+          const iconClass = data.vehicle_type === "motor"
+            ? '<i class="fa-solid fa-motorcycle"></i>'
+            : '<i class="fa-solid fa-car"></i>';
+
+          box.innerHTML = `
+            <div class="car-icon">${iconClass}</div>
+            <div>${isMine ? "Your Slot" : status === "tersedia" ? "Available" : status === "penuh" ? "Occupied" : "No Parking"}</div>
+            <div class="slot-id">${isMine ? "Plat: " + data.plate_number : "ID: " + slotId}</div>
+          `;
+
+          if (status === "tersedia" && !userAlreadyReserved) {
+            box.onclick = () => openModal(slotId);
+            availableCount++;
+          } else if (isMine) {
+            box.onclick = () => cancelReservation(slotId);
+            userAlreadyReserved = true;
+          }
+
+          grid.appendChild(box);
         });
+
+        if (availableCount === 0 && !userAlreadyReserved) {
+          const notice = document.createElement("div");
+          notice.style.textAlign = "center";
+          notice.style.color = "#e74c3c";
+          notice.style.marginTop = "20px";
+          notice.innerHTML = "🚫 Semua slot penuh. Silakan cek kembali nanti.";
+          grid.appendChild(notice);
+        }
       });
     }
 
-    function sendNotificationToAll(title, body) {
-      db.collection("push_tokens").get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const token = doc.data().token;
-          fetch("https://fcm.googleapis.com/fcm/send", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": "key=BKzShUXm8U5KNFnzGkA9EsICo98JONYnm0Ff80_XaFil8RHqxGBAIfmeCcfCUKLX836hgCTe6vCIoG3zHx9d_hs"
-            },
-            body: JSON.stringify({
-              to: token,
-              notification: {
-                title: title,
-                body: body
-              }
-            })
-          });
-        });
+    function openModal(slotId) {
+      rtdb.ref("parking_slots").orderByChild("reserved_by").equalTo(currentUserId).once("value", snapshot => {
+        if (snapshot.exists()) {
+          alert("❗Anda sudah memiliki slot parkir yang aktif.");
+        } else {
+          selectedSlotId = slotId;
+          document.getElementById("reservationModal").style.display = "flex";
+        }
       });
     }
+
+    function closeModal() {
+      document.getElementById("reservationModal").style.display = "none";
+      selectedSlotId = null;
+    }
+
+    function submitReservation() {
+      const vehicleType = document.getElementById("vehicleType").value.trim().toLowerCase();
+      const plateNumber = document.getElementById("plateNumber").value.trim();
+
+      if (!vehicleType || !plateNumber) {
+        alert("Lengkapi semua data!");
+        return;
+      }
+
+      const data = {
+        status: "Penuh",
+        reserved_by: currentUserId,
+        vehicle_type: vehicleType,
+        plate_number: plateNumber,
+        reserved_at: new Date().toISOString()
+      };
+
+      rtdb.ref("parking_slots/" + selectedSlotId).set(data)
+        .then(() => {
+          closeModal();
+          alert("✅ Slot berhasil dipesan!");
+        })
+        .catch(err => alert("❌ Gagal memesan: " + err.message));
+    }
+
+    function cancelReservation(slotId) {
+      if (!confirm("Yakin ingin membatalkan reservasi Anda?")) return;
+
+      rtdb.ref("parking_slots/" + slotId).set({
+        status: "Tersedia"
+      }).then(() => {
+        alert("❎ Reservasi dibatalkan.");
+      }).catch(err => {
+        alert("❌ Gagal membatalkan: " + err.message);
+      });
+    }
+
+    function tambahEnamSlot() {
+      const newSlots = {
+        "346": { status: "Tersedia", vehicle_type: "mobil" },
+        "347": { status: "Tersedia", vehicle_type: "mobil" },
+        "348": { status: "Tersedia", vehicle_type: "mobil" },
+        "349": { status: "Tersedia", vehicle_type: "mobil" },
+        "350": { status: "Tersedia", vehicle_type: "mobil" },
+        "351": { status: "Tersedia", vehicle_type: "mobil" }
+      };
+
+      for (const [id, data] of Object.entries(newSlots)) {
+        firebase.database().ref("parking_slots/" + id).set(data);
+      }
+
+      alert("✅ 6 Slot baru telah ditambahkan!");
+    }
+
+    // Jalankan sekali:
+    // tambahEnamSlot();
+
   </script>
 </body>
 </html>

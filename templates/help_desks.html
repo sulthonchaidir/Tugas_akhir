@@ -2,62 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Help Desk - We Park</title>
+  <title>We-Park Help Desk</title>
   <style>
     body {
+      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f4;
+      background-color: #0a2b4c;
+    }
+
+    .navbar {
+      background-color: #102b45;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar h1 a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .navbar h1 a:hover {
+      color: #a3c2f2;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .navbar-right a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
       max-width: 600px;
-      margin: 40px auto;
+      margin: 60px auto;
+      background-color: #2c3e50;
+      border-radius: 12px;
+      padding: 40px;
+      color: white;
+      text-align: center;
+    }
+
+    .settings-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .box {
+      background-color: #112d4e;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
     }
-    h1 {
-      text-align: center;
-      color: #24406b;
+
+    .box h3 {
+      margin-bottom: 20px;
     }
-    #user-email {
-      text-align: center;
-      margin-bottom: 15px;
-      font-size: 1rem;
-      color: #555;
+
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
-    textarea {
-      width: 100%;
-      height: 150px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      padding: 12px;
-      font-size: 1rem;
-      resize: vertical;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 15px;
-      background-color: #2980b9;
+
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
       border: none;
       border-radius: 8px;
-      padding: 12px 25px;
-      color: white;
-      font-weight: bold;
-      font-size: 1.1rem;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease;
     }
-    button:hover {
-      background-color: #1a5a90;
+
+    button.send {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    button.send:hover {
+      background-color: #2980b9;
+    }
+
+    .message {
+      margin-top: 20px;
+      color: #f1c40f;
     }
   </style>
 </head>
 <body>
+  <div class="navbar">
+    <h1><a href="/dashboard">Welcome in We-Park Management</a></h1>
+    <div class="navbar-right">
+      <a href="/settings.html">Setting</a>
+      <a href="/dashboard">SeePark</a>
+      <a href="/profile.html">Account</a>
+    </div>
+  </div>
 
-  <h1>Help Desk - Kirim Keluhan Aplikasi</h1>
-  <div id="user-email">Memuat info user...</div>
-  <textarea id="complaint" placeholder="Tuliskan keluhan atau masukan terkait aplikasi..."></textarea>
-  <button id="sendBtn">Kirim Keluhan</button>
+  <div class="container">
+    <div class="settings-icon">⚙️</div>
+    <div class="box">
+      <h3>Keluhan Customer</h3>
+      <div class="input-group">
+        <input type="text" id="complaintText" placeholder="Your concern..." />
+        <button class="send" onclick="submitComplaint()">➤</button>
+      </div>
+      <div class="message" id="msgStatus"></div>
+    </div>
+  </div>
 
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
@@ -71,39 +135,40 @@
       messagingSenderId: "972441358033",
       appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
     };
+
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById('user-email').textContent = 'Login sebagai: ' + user.email;
+    let currentUserId = null;
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "/login";
       } else {
-        window.location.href = '/login';
+        currentUserId = user.uid;
       }
     });
 
-    document.getElementById('sendBtn').addEventListener('click', () => {
-      const user = auth.currentUser;
-      const complaint = document.getElementById('complaint').value.trim();
+    function submitComplaint() {
+      const text = document.getElementById("complaintText").value.trim();
+      const msg = document.getElementById("msgStatus");
 
-      if (!complaint) {
-        alert('Mohon isi keluhan terlebih dahulu.');
+      if (!text) {
+        msg.innerText = "⚠️ Masukkan keluhan terlebih dahulu.";
         return;
       }
 
-      db.collection('app_complaints').add({
-        email: user.email,
-        message: complaint,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      db.collection("user_feedback").add({
+        user_id: currentUserId,
+        message: text,
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
-        alert('Keluhan berhasil dikirim. Terima kasih atas masukan Anda!');
-        document.getElementById('complaint').value = '';
-      }).catch(error => {
-        alert('Gagal mengirim keluhan: ' + error.message);
+        msg.innerText = "✅ Keluhan berhasil dikirim.";
+        document.getElementById("complaintText").value = "";
+      }).catch(err => {
+        msg.innerText = "❌ Gagal mengirim: " + err.message;
       });
-    });
+    }
   </script>
-
 </body>
 </html>

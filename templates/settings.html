@@ -2,61 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Help & Logout - We Park</title>
+  <title>We-Park Settings</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #24406b;
-      color: white;
       margin: 0;
-      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0a2b4c;
+    }
+
+    .navbar {
+      background-color: #102b45;
+      color: white;
+      padding: 1rem 2rem;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
     }
-    .button-container {
+
+    .navbar h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .navbar-right {
       display: flex;
-      gap: 20px;
+      align-items: center;
+      gap: 15px;
     }
-    button {
-      padding: 15px 30px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      font-weight: bold;
-      min-width: 160px;
+
+    .navbar-right a {
       color: white;
-      transition: background-color 0.3s ease;
+      text-decoration: none;
+      font-weight: bold;
     }
-    #helpBtn {
-      background-color: #2980b9;
+
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background-color: #2c3e50;
+      border-radius: 12px;
+      padding: 40px;
+      color: white;
+      text-align: center;
     }
-    #helpBtn:hover {
-      background-color: #1a5a90;
+
+    .settings-icon {
+      font-size: 50px;
+      margin-bottom: 20px;
     }
-    #dashboardBtn {
-      background-color: #27ae60;
+
+    .settings-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #1a2d40;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
     }
-    #dashboardBtn:hover {
-      background-color: #1e8449;
+
+    .settings-btn:hover {
+      background-color: #34495e;
     }
-    #logoutBtn {
-      background-color: #e74c3c;
+
+    .toggle {
+      margin-top: 20px;
     }
-    #logoutBtn:hover {
-      background-color: #c0392b;
+
+    .toggle input {
+      transform: scale(1.4);
+      margin-left: 10px;
     }
   </style>
 </head>
 <body>
-
-  <div class="button-container">
-    <button id="helpBtn">Help Desk</button>
-    <button id="dashboardBtn">Kembali ke Dashboard</button>
-    <button id="logoutBtn">Logout</button>
+  <div class="navbar">
+    <h1><a href="/dashboard" style="color: white; text-decoration: none;">Welcome in We-Park Management</a></h1>
+    <div class="navbar-right">
+      <a href="/dashboard">See Park</a>
+      <a href="/profile.html">Account</a>
+    </div>
   </div>
 
+  <div class="container">
+    <div class="settings-icon">⚙️</div>
+    <button class="settings-btn" onclick="location.href='/help_desks.html'">Help Desk</button>
+    <button class="settings-btn" onclick="alert('Report clicked')">Report</button>
+    <button class="settings-btn" onclick="logout()">Logout Account</button>
+    
+    <div class="toggle">
+      <label>Notification</label>
+      <input type="checkbox" id="notifToggle" onchange="toggleNotification()" />
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
@@ -69,23 +113,25 @@
       messagingSenderId: "972441358033",
       appId: "1:972441358033:web:dfb91b9e38ef48cc7fbff0"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
 
-    document.getElementById('helpBtn').addEventListener('click', () => {
-      window.location.href = '/help_desks.html';
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "/login";
+      }
     });
 
-    document.getElementById('dashboardBtn').addEventListener('click', () => {
-      window.location.href = '/dashboard';
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      auth.signOut().then(() => {
-        window.location.href = '/login';
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "/login";
       });
-    });
+    }
+
+    function toggleNotification() {
+      const checked = document.getElementById('notifToggle').checked;
+      alert("Notifikasi " + (checked ? "diaktifkan" : "dimatikan"));
+      // Kamu bisa simpan preferensi ini ke Firestore jika mau
+    }
   </script>
 </body>
 </html>

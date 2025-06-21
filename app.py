@@ -7,7 +7,7 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
-@app.route('/help_desks')
+@app.route('/help_desks.html')
 def help_desks():
     return render_template('help_desks.html')
 
@@ -23,15 +23,15 @@ def register():
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route('/feedback')
+@app.route('/feedback.html')
 def feedback():
     return render_template("user_feedback.html")
 
-@app.route('/profile')
+@app.route('/profile.html')
 def profile():
     return render_template("profile.html")
 
-@app.route('/settings')
+@app.route('/settings.html')
 def settings():
     return render_template("settings.html")
 
